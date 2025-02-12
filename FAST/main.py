@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPExeption
+from fastapi import FastAPI, HTTPException
 from typing import Optional
 
 app= FastAPI(
@@ -28,12 +28,12 @@ def leerUsuarios():
 #Endpoint Agregar Nuevos Usuarios
 @app.post('/ususario/', tags=['Operaciones CRUD'])
 def agregarUsuario(usuario:dict):
-        for usr un usuarios:
-            if usr["id"] == ususario.get("id"):
+        for usr in usuarios:
+            if usr["id"] == usuario.get("id"):
                 raise HTTPExeption(status_code=400, detail="El id ya esxiste")
 
                 usuarios.append(usuario)
-                return ususario
+                return usuario
                 
 #Endpoint parámetro obligatorio
 @app.get('/usuario/{id}', tags=['Parámetro Obligatorio id'])
