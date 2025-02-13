@@ -24,3 +24,13 @@ def home():
 def leer_tareas():
     return {"Las tareas registradas son: ": tareas}
     
+    # Endpoint añadir tarea
+@app.post('/addTarea/', tags=['operaciones CRUD'])
+def agregar_tarea(tarea: dict):
+    for t in tareas:
+        if t["id"] == tarea.get("id"):
+            raise HTTPException(status_code=400, detail="ID existente")
+    tareas.append(tarea)
+    return tarea
+
+    
