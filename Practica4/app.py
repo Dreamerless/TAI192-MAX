@@ -33,4 +33,11 @@ def agregar_tarea(tarea: dict):
     tareas.append(tarea)
     return tarea
 
-    
+    # Endpoint actualizar tarea
+@app.put('/actualizarTarea/{id}', tags=['operaciones CRUD'])
+def actualizar_tarea(id: int, tarea_actualizada: dict):
+    for index, t in enumerate(tareas):
+        if t["id"] == id:
+            tareas[index].update(tarea_actualizada)
+            return tareas[index]
+    raise HTTPException(status_code=400, detail="ID inexistente")
