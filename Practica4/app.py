@@ -19,3 +19,8 @@ tareas = [
 def home():
     return {'hello': 'world FastAPI'}
     
+    # Endpoint consultar todas las tareas
+@app.get('/todosTareas', tags=['operaciones CRUD'])
+def leer_tareas():
+    return {"Las tareas registradas son: ": tareas}
+    
