@@ -1,54 +1,56 @@
 from fastapi import FastAPI,HTTPException
-from typing import Optional
+from typing import Optional,List
+from models import modeloUsuario
 
-app = FastAPI(
-    title='mi primer api',
+app= FastAPI(
+    title= 'Mi primerAPI 192',
     description= 'Acosta Gonzalez Maximiliano',
-    version='1.0.1'
+    version= '1.0.1'
 )
 
-usuarios = [
-    {"id": 1, "nombre": "Alfredo", "edad": 21},
-    {"id": 2, "nombre": "Polo", "edad": 22},
-    {"id": 3, "nombre": "Pedro", "edad": 19},  
-    {"id": 4, "nombre": "Maria", "edad": 20}
+# BD ficticia
+usuarios=[
+    {"id": 1,"nombre":"miguel", "edad":24, "correo":"miguel@gmail.com"},
+    {"id": 2, "nombre":"fer", "edad":32, "correo":"fer@gmail.com"},
+    {"id": 3, "nombre":"carmelo", "edad":58, "correo":"carmelo@gmail.com"},
+    {"id": 4, "nombre":"frida", "edad":17, "correo":"frida@gmail.com"}
 ]
 
-#endPoint home
-
-@app.get('/')
+# Endponit home
+@app.get('/', tags=['Hola Mundo'])
 def home():
-    return {'hello':'world FastAPI'}
+    return {'hello':'Hello World'}
 
-#endpoint consulta todos
-@app.get('/todosUsuarios', tags=['operaciones CRUD'])
+# Endponit CONSULTA TODOS
+@app.get('/TodosUsuarios', response_model= List[modeloUsuario], tags=['Operaciones CRUD'])
 def leerUsuarios():
-    return {"Los usuarios registrados son: ": usuarios}
+    return usuarios
 
-#endpoint Añadir
-@app.post('/addUsuarios/', tags=['operaciones CRUD'])
-def agregarUsuario(usuario:dict):
+# Endponit Agregar nuevos
+@app.post('/usuarios/', response_model= modeloUsuario, tags=['Operaciones CRUD'])
+def agregarUsuarios(usuario:modeloUsuario):
     for usr in usuarios:
-        if usr["id"]== usuario.get("id"):
-            raise HTTPException(status_code=400, detail="Id existente")
+        if usr["id"] == usuario.id:
+            raise HTTPException(status_code=400, detail="El ID ya existe")
+            
     usuarios.append(usuario)
     return usuario
 
-#endpoint actualizar
-@app.put('/actualizarUsuarios/{id}', tags=['operaciones CRUD'])
-def actualizarUsuario(id:int, usuario:dict):
-    for index,usr in enumerate(usuarios):
-        if usr["id"]== id:
-                usuarios[index].update(usuario)
-                return usuarios(index)
-    raise HTTPException(status_code=400, detail="Id inexistente")
-
-# Endpoint para eliminar un usuario
-@app.delete("/eliminarUsuarios/{id}", tags=["operaciones CRUD"])
-def eliminar_usuario(id: int):
+# Endponit Actualizar
+@app.put('/usuarios/{id}', response_model= modeloUsuario, tags=['Operaciones CRUD'])
+def actualizarUsuarios(id:int,usuarioActualizado:modeloUsuario):
     for index, usr in enumerate(usuarios):
-        if usr.id == id:
-            del usuarios[index]
-            return {"message": "Usuario eliminado correctamente"}
+        if usr["id"] == id:
+            usuarios[index]= usuarioActualizado.model_dump()
+            return usuarios[index]
+    raise HTTPException(status_code=400, detail="El usuario no existe")
 
-    raise HTTPException(status_code=404, detail="Usuario no encontrado")
+# Endponit Eliminar
+@app.delete('/usuarios/{id}', tags=['Operaciones CRUD'])
+def eliminarUsuarios(id:int):
+    for index, usr in enumerate(usuarios):
+        if usr["id"] == id:
+            usuarios.pop(index)
+            return {"Los usuarios existentes restantes son": usuarios}
+    raise HTTPException(status_code=400, detail="El usuario no existe")
+    
